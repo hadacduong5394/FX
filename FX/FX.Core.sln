@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FX.Data", "FX.Data\FX.Data.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FX.Identity", "FX.Identity\FX.Identity.csproj", "{B1E223BE-7E58-4058-B61F-E6E0F5141D83}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FX.Utils", "FX.Utils\FX.Utils.csproj", "{7B9B1BD9-1A24-47F9-8AA3-43E266146BEA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{B1E223BE-7E58-4058-B61F-E6E0F5141D83}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B1E223BE-7E58-4058-B61F-E6E0F5141D83}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B1E223BE-7E58-4058-B61F-E6E0F5141D83}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B9B1BD9-1A24-47F9-8AA3-43E266146BEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B9B1BD9-1A24-47F9-8AA3-43E266146BEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B9B1BD9-1A24-47F9-8AA3-43E266146BEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B9B1BD9-1A24-47F9-8AA3-43E266146BEA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
