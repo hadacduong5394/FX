@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Text;
 
-namespace FX.Core.Utils
+namespace FX.Utils.Helper
 {
     public static class ByteArrayHelpler
     {

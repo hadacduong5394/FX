@@ -1,5 +1,4 @@
-﻿using FX.Core.Utils;
-using log4net;
+﻿using FX.Utils.Helper;
 using RabbitMQ.Client;
 using System;
 
@@ -7,7 +6,6 @@ namespace FX.Utils.MQUtils
 {
     public class MessageQueues<T>
     {
-        private static readonly ILog log = LogManager.GetLogger(typeof(T));
         public string QueueName { get; set; }
 
         private MessageQueues()
@@ -42,9 +40,8 @@ namespace FX.Utils.MQUtils
                     return true;
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                log.Error(ex);
                 return false;
             }
         }
@@ -79,37 +76,29 @@ namespace FX.Utils.MQUtils
                         return false;
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                log.Error(ex);
+                return false;
             }
-            return false;
         }
 
         public T Pull()
         {
-            try
+            using (var channel = MQFactory.Connection.CreateModel())
             {
-                using (var channel = MQFactory.Connection.CreateModel())
+                channel.QueueDeclare(queue: QueueName,
+                                     durable: true,
+                                     exclusive: false,
+                                     autoDelete: false,
+                                     arguments: null);
+                channel.BasicQos(prefetchSize: 0, prefetchCount: 1, global: false);
+                BasicGetResult result = channel.BasicGet(QueueName, false);
+                if (result != null)
                 {
-                    channel.QueueDeclare(queue: QueueName,
-                                         durable: true,
-                                         exclusive: false,
-                                         autoDelete: false,
-                                         arguments: null);
-                    channel.BasicQos(prefetchSize: 0, prefetchCount: 1, global: false);
-                    BasicGetResult result = channel.BasicGet(QueueName, false);
-                    if (result != null)
-                    {
-                        T model = ByteArrayHelpler.ByteArrayToObject<T>(result.Body);
-                        channel.BasicAck(result.DeliveryTag, false);
-                        return model;
-                    }
+                    T model = ByteArrayHelpler.ByteArrayToObject<T>(result.Body);
+                    channel.BasicAck(result.DeliveryTag, false);
+                    return model;
                 }
-            }
-            catch (Exception ex)
-            {
-                log.Error(ex);
             }
             return default(T);
         }
