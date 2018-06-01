@@ -1,85 +1,31 @@
 ﻿using FX.Core.Utils;
 using log4net;
 using RabbitMQ.Client;
-using RabbitMQ.Client.Events;
 using System;
-using System.Configuration;
 
 namespace FX.Utils.MQUtils
 {
-    public static class MessageQueues<T>
+    public class MessageQueues<T>
     {
-        private static ILog log = LogManager.GetLogger("MessageQueues");
+        private static readonly ILog log = LogManager.GetLogger(typeof(T));
+        public string QueueName { get; set; }
 
-        private static string MQHostName = ConfigurationManager.AppSettings["MQHostName"];
-        private static string MQUserName = ConfigurationManager.AppSettings["MQUserName"];
-        private static string MQPassword = ConfigurationManager.AppSettings["MQPassword"];
-        private static string MQQueueName = ConfigurationManager.AppSettings["MQQueueName"];
-
-        private static ConnectionFactory factory;
-        private static IConnection connection;
-        private static IModel chanel;
-        private static readonly object padlock = new object();
-
-        public static ConnectionFactory MQFactory
+        private MessageQueues()
         {
-            get
-            {
-                if (factory == null)
-                {
-                    lock (padlock)
-                    {
-                        if (factory == null)
-                        {
-                            factory = new ConnectionFactory() { HostName = MQHostName, UserName = MQUserName, Password = MQPassword };
-                            // attempt recovery every 1 seconds
-                            factory.NetworkRecoveryInterval = TimeSpan.FromSeconds(1);
-                            factory.AutomaticRecoveryEnabled = true;
-                        }
-                    }
-                }
-                return factory;
-            }
         }
 
-        public static IConnection MQConnection
+        public MessageQueues(string queueName)
         {
-            get
-            {
-                if (connection == null)
-                {
-                    lock (padlock)
-                        if (connection == null)
-                            connection = MQFactory.CreateConnection();
-                }
-                if (!connection.IsOpen)
-                {
-                    connection.Dispose();
-                    connection = MQFactory.CreateConnection();
-                }
-                return connection;
-            }
+            this.QueueName = queueName;
         }
 
-        public static IModel MQChanel
-        {
-            get
-            {
-                if (chanel == null)
-                    chanel = MQConnection.CreateModel();
-                if (chanel.IsClosed)
-                    chanel = MQConnection.CreateModel();
-                return chanel;
-            }
-        }
-
-        public static bool Push(T message)
+        public bool Push(T message)
         {
             try
             {
-                using (var channel = MQConnection.CreateModel())
+                using (var channel = MQFactory.Connection.CreateModel())
                 {
-                    channel.QueueDeclare(queue: MQQueueName,
+                    channel.QueueDeclare(queue: QueueName,
                                          durable: true,
                                          exclusive: false,
                                          autoDelete: false,
@@ -89,7 +35,7 @@ namespace FX.Utils.MQUtils
                     byte[] body = ByteArrayHelpler.ObjectToByteArray(message);
                     //---------------------------------
                     channel.BasicPublish(exchange: "",
-                                         routingKey: MQQueueName,
+                                         routingKey: QueueName,
                                          basicProperties: properties,
                                          body: body);
                     //--------------------
@@ -103,39 +49,20 @@ namespace FX.Utils.MQUtils
             }
         }
 
-        public static bool Pull(IModel channel, Func<T, bool> excuteMessage)
-        {
-            BasicGetResult result = channel.BasicGet(MQQueueName, false);
-            if (result != null)
-            {
-                T msg = ByteArrayHelpler.ByteArrayToObject<T>(result.Body);
-                if (excuteMessage(msg))
-                {
-                    // đánh dấu đã đọc msg này
-                    channel.BasicAck(result.DeliveryTag, false);
-                    return true;
-                }
-                else
-                    return false;
-            }
-            else
-                return false;
-        }
-
-        public static bool Pull(Func<T, bool> excuteMessage)
+        public bool Pull(Func<T, bool> excuteMessage)
         {
             try
             {
-                using (var channel = MQConnection.CreateModel())
+                using (var channel = MQFactory.Connection.CreateModel())
                 {
-                    channel.QueueDeclare(queue: MQQueueName,
+                    channel.QueueDeclare(queue: QueueName,
                                          durable: true,
                                          exclusive: false,
                                          autoDelete: false,
                                          arguments: null);
                     channel.BasicQos(prefetchSize: 0, prefetchCount: 1, global: false);
 
-                    BasicGetResult result = channel.BasicGet(MQQueueName, false);
+                    BasicGetResult result = channel.BasicGet(QueueName, false);
                     if (result != null)
                     {
                         T msg = ByteArrayHelpler.ByteArrayToObject<T>(result.Body);
@@ -159,19 +86,19 @@ namespace FX.Utils.MQUtils
             return false;
         }
 
-        public static T Pull()
+        public T Pull()
         {
             try
             {
-                using (var channel = MQConnection.CreateModel())
+                using (var channel = MQFactory.Connection.CreateModel())
                 {
-                    channel.QueueDeclare(queue: MQQueueName,
+                    channel.QueueDeclare(queue: QueueName,
                                          durable: true,
                                          exclusive: false,
                                          autoDelete: false,
                                          arguments: null);
                     channel.BasicQos(prefetchSize: 0, prefetchCount: 1, global: false);
-                    BasicGetResult result = channel.BasicGet(MQQueueName, false);
+                    BasicGetResult result = channel.BasicGet(QueueName, false);
                     if (result != null)
                     {
                         T model = ByteArrayHelpler.ByteArrayToObject<T>(result.Body);
@@ -187,11 +114,11 @@ namespace FX.Utils.MQUtils
             return default(T);
         }
 
-        public static bool QueueIsEmpty()
+        public bool QueueIsEmpty()
         {
-            using (var channel = MQConnection.CreateModel())
+            using (var channel = MQFactory.Connection.CreateModel())
             {
-                var count = channel.MessageCount(MQQueueName);
+                var count = channel.MessageCount(QueueName);
                 if (count == 0)
                 {
                     return true;
@@ -200,37 +127,13 @@ namespace FX.Utils.MQUtils
             return false;
         }
 
-        public static bool Consumer(Func<T, bool> excuteMessage)
+        public uint Count()
         {
-            try
+            using (var channel = MQFactory.Connection.CreateModel())
             {
-                using (var channel = MQConnection.CreateModel())
-                {
-                    channel.QueueDeclare(queue: MQQueueName,
-                                         durable: true,
-                                         exclusive: false,
-                                         autoDelete: false,
-                                         arguments: null);
-                    channel.BasicQos(prefetchSize: 0, prefetchCount: 1, global: false);
-
-                    var consumer = new EventingBasicConsumer(channel);
-                    consumer.Received += (ch, ea) =>
-                    {
-                        var body = ea.Body;
-                        // ... process the message
-                        T msg = ByteArrayHelpler.ByteArrayToObject<T>(body);
-                        if (excuteMessage(msg))
-                            channel.BasicAck(ea.DeliveryTag, false);
-                    };
-                    String consumerTag = channel.BasicConsume(MQQueueName, false, consumer);
-                    return true;
-                }
+                var count = channel.MessageCount(QueueName);
+                return count;
             }
-            catch (Exception ex)
-            {
-                log.Error(ex);
-            }
-            return false;
         }
     }
 }
