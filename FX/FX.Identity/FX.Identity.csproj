@@ -77,12 +77,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Implement\GroupService.cs" />
-    <Compile Include="Implement\RoleGroupService.cs" />
     <Compile Include="Implement\RoleService.cs" />
     <Compile Include="Implement\UserGroupService.cs" />
     <Compile Include="Implement\UserService.cs" />
     <Compile Include="Interface\IGroupService.cs" />
-    <Compile Include="Interface\IRoleGroupService.cs" />
     <Compile Include="Interface\IRoleService.cs" />
     <Compile Include="Interface\IUserGroupService.cs" />
     <Compile Include="Interface\IUserService.cs" />

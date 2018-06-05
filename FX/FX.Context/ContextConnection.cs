@@ -12,7 +12,6 @@ namespace FX.Context
 
         public DbSet<Group> Groups { get; set; }
         public DbSet<Role> ApplicationRoles { get; set; }
-        public DbSet<RoleGroup> RoleGroups { get; set; }
         public DbSet<UserGroup> UserGroups { get; set; }
         public DbSet<CompanyInfo> Companies { get; set; }
     }

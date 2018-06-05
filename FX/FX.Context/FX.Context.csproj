@@ -65,7 +65,6 @@
     <Compile Include="IdentityDomain\CompanyInfo.cs" />
     <Compile Include="IdentityDomain\Group.cs" />
     <Compile Include="IdentityDomain\Role.cs" />
-    <Compile Include="IdentityDomain\RoleGroup.cs" />
     <Compile Include="IdentityDomain\UserGroup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
