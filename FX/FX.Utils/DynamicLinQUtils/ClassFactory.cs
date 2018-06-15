@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace FX.Utils.DynamicLinQUtils
 {
-    public class ClassFactory
+    internal class ClassFactory
     {
         public static readonly ClassFactory Instance = new ClassFactory();
 

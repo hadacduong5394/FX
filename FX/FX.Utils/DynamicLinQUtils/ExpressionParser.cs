@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FX.Utils.DynamicLinQUtils
 {
-    public class ExpressionParser
+    internal class ExpressionParser
     {
         private struct Token
         {

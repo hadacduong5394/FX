@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace FX.Utils.DynamicLinQUtils
 {
-    public static class DynamicExpression
+    internal static class DynamicExpression
     {
         public static Expression Parse(Type resultType, string expression, params object[] values)
         {

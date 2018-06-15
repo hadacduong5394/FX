@@ -2,7 +2,7 @@
 
 namespace FX.Utils.DynamicLinQUtils
 {
-    public class DynamicProperty
+    internal class DynamicProperty
     {
         private string name;
         private Type type;

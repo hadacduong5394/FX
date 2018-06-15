@@ -2,7 +2,7 @@
 
 namespace FX.Utils.DynamicLinQUtils
 {
-    public sealed class ParseException : Exception
+    internal sealed class ParseException : Exception
     {
         private int position;
 

@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace FX.Utils.DynamicLinQUtils
 {
-    public class Signature : IEquatable<Signature>
+    internal class Signature : IEquatable<Signature>
     {
         public DynamicProperty[] properties;
         public int hashCode;

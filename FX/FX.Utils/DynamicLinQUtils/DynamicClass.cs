@@ -3,7 +3,7 @@ using System.Text;
 
 namespace FX.Utils.DynamicLinQUtils
 {
-    public abstract class DynamicClass
+    internal abstract class DynamicClass
     {
         public override string ToString()
         {

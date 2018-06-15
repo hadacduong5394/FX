@@ -2,7 +2,7 @@
 
 namespace FX.Utils.DynamicLinQUtils
 {
-    public class DynamicOrdering
+    internal class DynamicOrdering
     {
         public Expression Selector;
         public bool Ascending;
