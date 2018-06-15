@@ -47,6 +47,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DynamicLinQUtils\ClassFactory.cs" />
+    <Compile Include="DynamicLinQUtils\DynamicClass.cs" />
+    <Compile Include="DynamicLinQUtils\DynamicExpression.cs" />
+    <Compile Include="DynamicLinQUtils\DynamicOrdering.cs" />
+    <Compile Include="DynamicLinQUtils\DynamicProperty.cs" />
+    <Compile Include="DynamicLinQUtils\DynamicQueryable.cs" />
+    <Compile Include="DynamicLinQUtils\ExpressionParser.cs" />
+    <Compile Include="DynamicLinQUtils\ParseException.cs" />
+    <Compile Include="DynamicLinQUtils\Res.cs" />
+    <Compile Include="DynamicLinQUtils\Signature.cs" />
     <Compile Include="Helper\ByteArrayHelpler.cs" />
     <Compile Include="MQUtils\MessageQueues.cs" />
     <Compile Include="MQUtils\MQFactory.cs" />
